@@ -8,20 +8,14 @@ from werkzeug.utils import secure_filename
 from functools import wraps
 
 # --- 서버 경로 설정 ---
-# 프로젝트의 절대 경로를 계산하여 Render 서버 환경에서도 경로가 꼬이지 않게 합니다.
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'amoc-2026-v3-secure'
-
-# [중요] Render Persistent Disk 사용을 위해 DB를 instance 폴더 안에 배치합니다.
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'exhibition.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# 업로드 폴더 설정
 app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'static', 'uploads')
 
-# 필요한 폴더(instance, uploads)가 없으면 자동으로 생성합니다.
 os.makedirs(os.path.join(basedir, 'instance'), exist_ok=True)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
@@ -40,7 +34,7 @@ class Artwork(db.Model):
     medium = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
     image_file = db.Column(db.String(100), nullable=False)
-    room = db.Column(db.Integer, default=1)  # 방 번호 (1~5)
+    room = db.Column(db.Integer, default=1)
     views = db.Column(db.Integer, default=0)
     comments = db.relationship('Comment', backref='artwork', cascade="all, delete-orphan")
 
@@ -49,19 +43,6 @@ class Comment(db.Model):
     artwork_id = db.Column(db.Integer, db.ForeignKey('artwork.id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
-
-# --- 로그인 권한 확인 데코레이터 ---
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            flash("로그인이 필요한 페이지입니다.")
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
-
-# --- 작가 리스트 고정 ---
-ARTISTS = ["강유민", "김재준", "박희호", "박서현", "김세은", "신은하", "양연재", "이용준", "이지윤", "임승규", "전지현", "현수윤"]
 
 # --- 아티스트 데이터 정의 (전달받은 정보 반영) ---
 ROOM_ARTISTS = {
@@ -80,7 +61,7 @@ ROOM_ARTISTS = {
     ],
     4: [
         {"name": "김재준", "color_name": "Marine Blue", "hex": "#01386a"},
-        {"name": "양연재", "color_name": "White", "hex": "#ffffff"} # 전달주신 000000(검정) 그대로 반영했습니다.
+        {"name": "양연재", "color_name": "White", "hex": "#000000"}
     ],
     5: [
         {"name": "이용준", "color_name": "Royal Blue", "hex": "#305cde"},
@@ -89,12 +70,17 @@ ROOM_ARTISTS = {
     ]
 }
 
-@app.route('/room/<int:room_num>')
-def room_view(room_num):
-    artworks = Artwork.query.filter_by(room=room_num).all()
-    # 해당 방의 아티스트 정보를 템플릿에 전달
-    artists_info = ROOM_ARTISTS.get(room_num, [])
-    return render_template('room.html', artworks=artworks, room_num=room_num, artists_info=artists_info)
+ARTISTS = ["강유민", "김재준", "박희호", "박서현", "김세은", "신은하", "양연재", "이용준", "이지윤", "임승규", "전지현", "현수윤"]
+
+# --- 로그인 권한 확인 데코레이터 ---
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash("로그인이 필요한 페이지입니다.")
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # --- 경로 설정 (Routes) ---
 
@@ -105,7 +91,8 @@ def index():
 @app.route('/room/<int:room_num>')
 def room_view(room_num):
     artworks = Artwork.query.filter_by(room=room_num).all()
-    return render_template('room.html', artworks=artworks, room_num=room_num)
+    artists_info = ROOM_ARTISTS.get(room_num, [])
+    return render_template('room.html', artworks=artworks, room_num=room_num, artists_info=artists_info)
 
 @app.route('/experience')
 def experience():
@@ -149,8 +136,6 @@ def add_comment(artwork_id):
         db.session.add(new_comment)
         db.session.commit()
     return redirect(url_for('detail', artwork_id=artwork_id))
-
-# --- 인증 및 관리자 기능 ---
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -203,10 +188,12 @@ def delete_artwork(id):
     db.session.commit()
     return redirect(url_for('admin_main'))
 
+# --- 서버 실행 및 DB 생성 ---
 with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 

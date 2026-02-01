@@ -24,21 +24,44 @@
         }
         .color-square {
             display: inline-block;
-            width: 1.1rem; /* 글자 크기와 동일하게 설정 */
+            width: 1.1rem;
             height: 1.1rem;
-            border: 1px solid #000; /* 얇은 검은 테두리 */
+            border: 1px solid #000;
             vertical-align: middle;
         }
 
-        /* 기존 드롭다운 스타일 유지 */
+        /* 드롭다운 커스텀 스타일 */
         .room-dropdown-btn {
-            background-color: #fff; color: #000; border: 2px solid #000;
-            font-weight: 800; font-size: 1.1rem; border-radius: 0;
-            padding: 12px 30px; width: 250px; display: flex;
-            justify-content: space-between; align-items: center;
+            background-color: #fff;
+            color: #000;
+            border: 2px solid #000;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border-radius: 0;
+            padding: 12px 30px;
+            width: 250px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .dropdown-menu { border-radius: 0; border: 2px solid #000; width: 250px; padding: 0; }
-        .dropdown-item { font-weight: 600; padding: 12px 20px; }
+        .room-dropdown-btn:hover, .room-dropdown-btn:focus {
+            background-color: #f8f8f8;
+            box-shadow: none;
+        }
+        .dropdown-menu {
+            border-radius: 0;
+            border: 2px solid #000;
+            width: 250px;
+            margin-top: -2px !important;
+            padding: 0;
+        }
+        .dropdown-item {
+            font-weight: 600;
+            padding: 12px 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover { background-color: #000; color: #fff; }
         .dropdown-item.active { background-color: #333; color: #fff; }
     </style>
 </head>
@@ -55,6 +78,28 @@
         </div>
     </div>
 </nav>
+
+<div class="offcanvas offcanvas-end" id="sideMenu">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-bold">AMOC MENU</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <div class="list-group list-group-flush">
+            <a href="/" class="list-group-item list-group-item-action py-3">Main Home</a>
+            <a href="/room/1" class="list-group-item list-group-item-action py-3 fw-bold text-dark">Exhibition Rooms</a>
+            <a href="/experience" class="list-group-item list-group-item-action py-3">Experience Zone</a>
+            <a href="/goods" class="list-group-item list-group-item-action py-3">Exhibition Goods</a>
+            <a href="/search" class="list-group-item list-group-item-action py-3">Search</a>
+            {% if session['user_id'] %}
+            <a href="/admin" class="list-group-item list-group-item-action py-3 text-primary">Admin Panel</a>
+            <a href="/logout" class="list-group-item list-group-item-action py-3 text-danger">Logout</a>
+            {% else %}
+            <a href="/login" class="list-group-item list-group-item-action py-3">Admin Login</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
 
 <div class="container py-5">
     <header class="mb-4 text-center">
@@ -87,7 +132,9 @@
         {% for art in artworks %}
         <div class="col">
             <div class="card h-100 artwork-card" onclick="location.href='/artwork/{{ art.id }}'">
-                <div class="card-img-wrapper"><img src="/static/uploads/{{ art.image_file }}" class="card-img-top"></div>
+                <div class="card-img-wrapper">
+                    <img src="/static/uploads/{{ art.image_file }}" class="card-img-top">
+                </div>
                 <div class="card-body px-0 pt-3 text-center">
                     <h5 class="artwork-title mb-1" style="font-size:1rem;">{{ art.title }}</h5>
                     <p class="text-muted small fw-medium">{{ art.artist }}</p>
@@ -96,14 +143,25 @@
         </div>
         {% else %}
         <div class="col-12 py-5 d-flex justify-content-center align-items-center">
-            <div class="text-center p-5 border w-100 bg-light text-muted fw-bold">아직 작품이 등록되지 않았습니다.</div>
+            <div class="text-center p-5 border w-100 bg-light text-muted fw-bold">
+                아직 작품이 등록되지 않았습니다.
+            </div>
         </div>
         {% endfor %}
     </div>
 </div>
 
 <footer>
-    </footer>
+    <div class="container text-center">
+        <h5 class="mb-4 fw-bold">AMOC EXHIBITION 2026</h5>
+        <p class="mb-1 opacity-75">Address: &lt;갤러리 1971&gt;, 서울특별시 양천구 신목로5길 6-12</p>
+        <p class="mb-1 opacity-75">Time: 12:00 - 18:00</p>
+        <div class="mt-4">
+            <a href="https://instagram.com/a_meeting_of_colors" class="text-white text-decoration-none fw-bold" target="_blank">INSTAGRAM @A_MEETING_OF_COLORS</a>
+        </div>
+        <p class="mt-5 opacity-50 small">COPYRIGHT &copy; 2026 AMOC. ALL RIGHTS RESERVED.</p>
+    </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

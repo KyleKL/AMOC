@@ -7,11 +7,23 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from functools import wraps
 
+# --- 서버 경로 설정 ---
+# 프로젝트의 절대 경로를 계산하여 Render 서버 환경에서도 경로가 꼬이지 않게 합니다.
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'amoc-2026-v3-secure'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///exhibition.db'
+
+# [중요] Render Persistent Disk 사용을 위해 DB를 instance 폴더 안에 배치합니다.
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'exhibition.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
+
+# 업로드 폴더 설정
+app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'static', 'uploads')
+
+# 필요한 폴더(instance, uploads)가 없으면 자동으로 생성합니다.
+os.makedirs(os.path.join(basedir, 'instance'), exist_ok=True)
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
 
@@ -136,8 +148,6 @@ def add_artwork():
     file = request.files['image']
     if file:
         filename = secure_filename(file.filename)
-        if not os.path.exists(app.config['UPLOAD_FOLDER']):
-            os.makedirs(app.config['UPLOAD_FOLDER'])
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         
         new_art = Artwork(

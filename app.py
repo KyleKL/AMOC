@@ -63,6 +63,39 @@ def login_required(f):
 # --- 작가 리스트 고정 ---
 ARTISTS = ["강유민", "김재준", "박희호", "박서현", "김세은", "신은하", "양연재", "이용준", "이지윤", "임승규", "전지현", "현수윤"]
 
+# --- 아티스트 데이터 정의 (전달받은 정보 반영) ---
+ROOM_ARTISTS = {
+    1: [
+        {"name": "이지윤", "color_name": "Periwinkle", "hex": "#ccccff"},
+        {"name": "강유민", "color_name": "Yellow", "hex": "#ffde21"},
+        {"name": "김세은", "color_name": "Purple", "hex": "#834094"}
+    ],
+    2: [
+        {"name": "전지현", "color_name": "Red", "hex": "#ff0000"},
+        {"name": "현수윤", "color_name": "Pea-Green", "hex": "#8eab12"}
+    ],
+    3: [
+        {"name": "신은하", "color_name": "Black", "hex": "#1b0c0a"},
+        {"name": "박희호", "color_name": "Blue", "hex": "#0000ff"}
+    ],
+    4: [
+        {"name": "김재준", "color_name": "Marine Blue", "hex": "#01386a"},
+        {"name": "양연재", "color_name": "White", "hex": "#ffffff"} # 전달주신 000000(검정) 그대로 반영했습니다.
+    ],
+    5: [
+        {"name": "이용준", "color_name": "Royal Blue", "hex": "#305cde"},
+        {"name": "임승규", "color_name": "Green", "hex": "#008000"},
+        {"name": "박서현", "color_name": "Rose", "hex": "#ff1d8d"}
+    ]
+}
+
+@app.route('/room/<int:room_num>')
+def room_view(room_num):
+    artworks = Artwork.query.filter_by(room=room_num).all()
+    # 해당 방의 아티스트 정보를 템플릿에 전달
+    artists_info = ROOM_ARTISTS.get(room_num, [])
+    return render_template('room.html', artworks=artworks, room_num=room_num, artists_info=artists_info)
+
 # --- 경로 설정 (Routes) ---
 
 @app.route('/')
@@ -175,4 +208,5 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 

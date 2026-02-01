@@ -1,0 +1,139 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root {
+    --primary-color: #000000;
+    --text-muted: #666666;
+    --bg-light: #ffffff;
+}
+
+body {
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--primary-color);
+    line-height: 1.6;
+}
+
+/* 저작권 팝업 */
+#copyPopup {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); z-index: 10000;
+    display: flex; justify-content: center; align-items: center; padding: 20px;
+}
+.popup-content {
+    background: #fff; padding: 50px 30px; max-width: 450px;
+    text-align: center; border-radius: 0;
+}
+
+/* 제목 굵기 강조 (900 Black) */
+h1.display-4 {
+    font-weight: 900 !important;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+}
+
+h2, h3, .artwork-title, .section-title {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.section-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    border-left: 8px solid #000;
+    padding-left: 1.2rem;
+}
+
+/* [수정됨] 포스터 스타일 
+   - height: 100vh; 제거 (화면 높이 강제 해제)
+   - object-fit: cover; 제거 (잘림 방지)
+   - height: auto; 추가 (비율 유지)
+   - max-width 추가 (PC에서 너무 거대해지는 것 방지, 중앙 정렬)
+*/
+.hero-poster { 
+    width: 100%; 
+    height: auto; 
+    display: block;
+    max-width: 1200px; /* PC화면에서 이미지가 너무 커지는 것을 방지 (선택 사항) */
+    margin: 0 auto;    /* 중앙 정렬 */
+}
+
+.navbar-brand { font-weight: 900; font-size: 1.5rem; }
+
+/* 통합 버튼 스타일 (btn-zone) */
+.btn-zone {
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    padding: 25px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+    display: block;
+    transition: 0.3s ease;
+    border: none;
+}
+.btn-zone:hover { background: #333; color: #fff; }
+.btn-zone:active { transform: scale(0.98); }
+
+/* 갤러리 정사각형 */
+.card-img-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #f4f4f4;
+}
+.card-img-top {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* 방 선택 탭 (통일성 확보) */
+.btn-room-tab {
+    display: inline-block;
+    padding: 12px 25px;
+    margin-right: 8px;
+    border: 1px solid #000;
+    background-color: #fff;
+    color: #000;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 0.9rem;
+    border-radius: 0;
+    transition: all 0.2s ease;
+}
+
+.btn-room-tab:hover {
+    background-color: #f0f0f0;
+    color: #000;
+}
+
+.btn-room-tab.active {
+    background-color: #000;
+    color: #fff;
+    border-color: #000;
+}
+
+/* 푸터 */
+footer {
+    background: #000; color: #fff;
+    padding: 80px 0; font-size: 0.8rem;
+}
+
+.detail-img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 2rem;
+    padding: 10px; /* 여백 추가 */
+}
+
+.detail-img {
+    max-width: 100%;      /* 너비가 화면(부모 요소)을 절대 넘지 않게 설정 */
+    max-height: 80vh;     /* 높이도 화면 높이의 80%까지만 차지하게 제한 (너무 길어짐 방지) */
+    width: auto;          /* 비율 유지 */
+    height: auto;         /* 비율 유지 */
+    object-fit: contain;  /* 이미지가 잘리지 않고 비율대로 쏙 들어가게 */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}

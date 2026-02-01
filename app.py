@@ -1,0 +1,166 @@
+import os
+from datetime import datetime
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
+from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+from functools import wraps
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'amoc-2026-v3-secure'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///exhibition.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+
+db = SQLAlchemy(app)
+
+# --- 데이터베이스 모델 정의 ---
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+
+class Artwork(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    artist = db.Column(db.String(50), nullable=False)
+    medium = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    image_file = db.Column(db.String(100), nullable=False)
+    room = db.Column(db.Integer, default=1)  # 방 번호 (1~5)
+    views = db.Column(db.Integer, default=0)
+    comments = db.relationship('Comment', backref='artwork', cascade="all, delete-orphan")
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    artwork_id = db.Column(db.Integer, db.ForeignKey('artwork.id'), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+
+# --- 로그인 권한 확인 데코레이터 ---
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash("로그인이 필요한 페이지입니다.")
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# --- 작가 리스트 고정 ---
+ARTISTS = ["강유민", "김재준", "박희호", "박서현", "김세은", "신은하", "양연재", "이용준", "이지윤", "임승규", "전지현", "현수윤"]
+
+# --- 경로 설정 (Routes) ---
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/room/<int:room_num>')
+def room_view(room_num):
+    artworks = Artwork.query.filter_by(room=room_num).all()
+    return render_template('room.html', artworks=artworks, room_num=room_num)
+
+@app.route('/experience')
+def experience():
+    return render_template('experience.html')
+
+@app.route('/goods')
+def goods():
+    return render_template('goods.html')
+
+@app.route('/search')
+def search():
+    q = request.args.get('q', '')
+    room_filter = request.args.get('room', '')
+    artist_filter = request.args.get('artist', '')
+
+    query = Artwork.query
+    if q:
+        query = query.filter(or_(Artwork.title.like(f'%{q}%'), Artwork.artist.like(f'%{q}%')))
+    if room_filter:
+        query = query.filter_by(room=int(room_filter))
+    if artist_filter:
+        query = query.filter_by(artist=artist_filter)
+
+    results = query.all()
+    return render_template('search.html', results=results, query=q, 
+                           current_room=room_filter, current_artist=artist_filter, artists=ARTISTS)
+
+@app.route('/artwork/<int:artwork_id>')
+def detail(artwork_id):
+    artwork = Artwork.query.get_or_404(artwork_id)
+    artwork.views += 1
+    db.session.commit()
+    comments = Comment.query.filter_by(artwork_id=artwork_id).order_by(Comment.created_at.desc()).all()
+    return render_template('detail.html', artwork=artwork, comments=comments)
+
+@app.route('/artwork/<int:artwork_id>/comment', methods=['POST'])
+def add_comment(artwork_id):
+    content = request.form.get('content')
+    if content:
+        new_comment = Comment(artwork_id=artwork_id, content=content)
+        db.session.add(new_comment)
+        db.session.commit()
+    return redirect(url_for('detail', artwork_id=artwork_id))
+
+# --- 인증 및 관리자 기능 ---
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user = User.query.filter_by(username=request.form.get('username')).first()
+        if user and check_password_hash(user.password, request.form.get('password')):
+            session['user_id'] = user.id
+            session['username'] = user.username
+            return redirect(url_for('admin_main'))
+        flash("로그인 정보가 올바르지 않습니다.")
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
+@app.route('/admin')
+@login_required
+def admin_main():
+    artworks = Artwork.query.all()
+    comments = Comment.query.all()
+    return render_template('admin.html', artworks=artworks, comments=comments, artists=ARTISTS)
+
+@app.route('/admin/add', methods=['POST'])
+@login_required
+def add_artwork():
+    file = request.files['image']
+    if file:
+        filename = secure_filename(file.filename)
+        if not os.path.exists(app.config['UPLOAD_FOLDER']):
+            os.makedirs(app.config['UPLOAD_FOLDER'])
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        
+        new_art = Artwork(
+            title=request.form.get('title'),
+            artist=request.form.get('artist'),
+            medium=request.form.get('medium'),
+            description=request.form.get('description'),
+            image_file=filename,
+            room=int(request.form.get('room'))
+        )
+        db.session.add(new_art)
+        db.session.commit()
+    return redirect(url_for('admin_main'))
+
+@app.route('/admin/delete_art/<int:id>')
+@login_required
+def delete_artwork(id):
+    art = Artwork.query.get_or_404(id)
+    db.session.delete(art)
+    db.session.commit()
+    return redirect(url_for('admin_main'))
+
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)

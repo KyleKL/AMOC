@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXPERIENCE ZONE - AMOC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+
+<nav class="navbar navbar-light sticky-top border-bottom bg-white py-3">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">AMOC</a>
+        <div class="d-flex align-items-center">
+            <a href="/search" class="btn btn-link text-dark text-decoration-none me-3 fw-bold">SEARCH</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div class="offcanvas offcanvas-end" id="sideMenu">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-bold">AMOC MENU</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <div class="list-group list-group-flush">
+            <a href="/" class="list-group-item list-group-item-action py-3">Main Home</a>
+            <a href="/room/1" class="list-group-item list-group-item-action py-3">Exhibition Rooms</a>
+            <a href="/experience" class="list-group-item list-group-item-action py-3 fw-bold text-dark">Experience Zone</a>
+            <a href="/goods" class="list-group-item list-group-item-action py-3">Exhibition Goods</a>
+            <a href="/search" class="list-group-item list-group-item-action py-3">Search</a>
+            {% if session['user_id'] %}
+            <a href="/admin" class="list-group-item list-group-item-action py-3 text-primary">Admin Panel</a>
+            <a href="/logout" class="list-group-item list-group-item-action py-3 text-danger">Logout</a>
+            {% else %}
+            <a href="/login" class="list-group-item list-group-item-action py-3">Admin Login</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <header class="text-center mb-5 pb-4">
+        <h1 class="display-4 mb-3">EXPERIENCE ZONE</h1>
+        <p class="text-muted">작품 너머의 이야기와 함께하는 AMOC만의 특별한 체험 영역입니다.</p>
+    </header>
+
+    <div class="row g-5">
+        <div class="col-12">
+            <h2 class="section-title">FORTUNE COOKIE</h2>
+            <div class="mb-4">
+                <img src="/static/images/exp_fortune.jpg" class="img-fluid border shadow-sm w-100" alt="Fortune Cookie" onerror="this.src='https://via.placeholder.com/800x400?text=Fortune+Cookie+Zone'">
+            </div>
+            <p class="fs-5 lh-lg text-muted">
+                전시장 입구에서 만나는 작은 설렘. 작가들이 관람객분들을 위해 직접 선별한 문장들이 담긴 포춘쿠키를 나누어 드립니다. 오늘 당신에게 도착한 예술적 영감을 확인해 보세요.
+            </p>
+        </div>
+
+        <div class="col-12">
+            <h2 class="section-title">GUESTBOOK</h2>
+            <div class="mb-4">
+                <img src="/static/images/exp_guestbook.jpg" class="img-fluid border shadow-sm w-100" alt="Guestbook" onerror="this.src='https://via.placeholder.com/800x400?text=Guestbook+Zone'">
+            </div>
+            <p class="fs-5 lh-lg text-muted">
+                디지털 아카이빙과는 또 다른 아날로그의 온도. 비치된 방명록에 작가들에게 전하고 싶은 따뜻한 한마디나, 전시를 보며 느꼈던 감정을 자유롭게 남겨주세요.
+            </p>
+        </div>
+
+        <div class="col-12">
+            <h2 class="section-title">PHOTO ZONE</h2>
+            <div class="mb-4">
+                <img src="/static/images/exp_photo.jpg" class="img-fluid border shadow-sm w-100" alt="Photo Zone" onerror="this.src='https://via.placeholder.com/800x400?text=Photo+Zone'">
+            </div>
+            <p class="fs-5 lh-lg text-muted">
+                AMOC의 상징적인 컬러와 오브제로 구성된 포토 스팟입니다. 전시의 여운을 사진으로 기록하고, 소중한 사람들과 추억을 공유해 보세요.
+            </p>
+        </div>
+
+        <div class="col-12">
+            <h2 class="section-title">ARTIST'S SKETCH</h2>
+            <div class="mb-4">
+                <img src="/static/images/exp_sketch.jpg" class="img-fluid border shadow-sm w-100" alt="Artist Sketch" onerror="this.src='https://via.placeholder.com/800x400?text=Artist+Sketch+Zone'">
+            </div>
+            <p class="fs-5 lh-lg text-muted">
+                완성된 캔버스 뒤에 숨겨진 치열한 고민의 흔적. 작가들의 영감이 처음 시작된 아이디어 스케치와 습작 노트를 직접 들여다보며 작품의 탄생 과정을 느껴볼 수 있습니다.
+            </p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container text-center">
+        <h5 class="mb-4 fw-bold">AMOC EXHIBITION 2026</h5>
+        <p class="mb-1 opacity-75">Address: &lt;갤러리 1971&gt;, 서울특별시 양천구 신목로5길 6-12</p>
+        <p class="mb-1 opacity-75">Time: 12:00 - 18:00</p>
+        <div class="mt-4">
+            <a href="https://instagram.com/a_meeting_of_colors" class="text-white text-decoration-none fw-bold" target="_blank">INSTAGRAM @A_MEETING_OF_COLORS</a>
+        </div>
+        <p class="mt-5 opacity-50 small">COPYRIGHT &copy; 2026 AMOC. ALL RIGHTS RESERVED.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

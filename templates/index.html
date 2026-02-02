@@ -51,7 +51,7 @@
     </div>
 </div>
 
-<img src="{{ url_for('static', filename='images/exhibition_map.png') }}" class="map-img" alt="Exhibition Map">
+<img src="/static/images/main_poster.jpg" class="hero-poster" alt="AMOC Poster">
     
 <div class="container py-5">
     <section class="mb-5 py-5 text-center">
@@ -62,7 +62,7 @@
     <section class="mb-5">
         <h2 class="section-title">EXHIBITION MAP</h2>
         <div class="map-container text-center">
-            <img src="/static/images/exhibition_map.png" class="map-img" alt="Map">
+            <img src="{{ url_for('static', filename='images/exhibition_map.png') }}" class="map-img" alt="Exhibition Map">
             <div class="d-grid gap-3 mt-5">
                 <a href="/room/1" class="btn-zone">VIEW EXHIBITION ROOMS</a>
                 <div class="row g-3">
@@ -91,3 +91,4 @@
 </body>
 
 </html>
+

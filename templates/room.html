@@ -137,7 +137,14 @@
                 </div>
                 <div class="card-body px-0 pt-3 text-center">
                     <h5 class="artwork-title mb-1" style="font-size:1rem;">{{ art.title }}</h5>
-                    <p class="text-muted small fw-medium">{{ art.artist }}</p>
+                    <p class="text-muted small fw-medium">
+                        {{ art.artist }}
+                        {% for info in artists_info %}
+                            {% if info.name == art.artist %}
+                                <span class="color-square" style="background-color: {{ info.hex }}; width: 1em; height: 1em;"></span>
+                            {% endif %}
+                        {% endfor %}
+                    </p>
                 </div>
             </div>
         </div>

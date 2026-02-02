@@ -126,7 +126,17 @@ def detail(artwork_id):
     artwork.views += 1
     db.session.commit()
     comments = Comment.query.filter_by(artwork_id=artwork_id).order_by(Comment.created_at.desc()).all()
-    return render_template('detail.html', artwork=artwork, comments=comments)
+    
+    artist_color_info = None
+    for room_artists_list in ROOM_ARTISTS.values():
+        for artist_data in room_artists_list:
+            if artist_data["name"] == artwork.artist:
+                artist_color_info = artist_data
+                break
+        if artist_color_info:
+            break
+    
+    return render_template('detail.html', artwork=artwork, comments=comments, artist_color_info=artist_color_info)
 
 @app.route('/artwork/<int:artwork_id>/comment', methods=['POST'])
 def add_comment(artwork_id):
@@ -194,6 +204,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

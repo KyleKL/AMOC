@@ -136,4 +136,15 @@ footer {
     height: auto;         /* 비율 유지 */
     object-fit: contain;  /* 이미지가 잘리지 않고 비율대로 쏙 들어가게 */
     box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+
+}
+
+/* 전시 지도 이미지 크기 조절 및 중앙 정렬 */
+.map-img {
+    max-width: 600px;   /* 원하는 가로 크기로 조절 (예: 600px~800px 추천) */
+    width: 70%;        /* 모바일 등 작은 화면에서는 화면 너비에 맞게 조절 */
+    height: auto;       /* 가로 세로 비율 유지 */
+    display: block;     /* 중앙 정렬을 위한 블록화 */
+    margin: 0 auto;     /* 가로 중앙 정렬 */
+    border: 1px solid #eee; /* 선택 사항: 지도 경계선을 위한 얇은 테두리 */
 }

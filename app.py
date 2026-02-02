@@ -61,10 +61,10 @@ ROOM_ARTISTS = {
     ],
     4: [
         {"name": "김재준", "color_name": "Marine Blue", "hex": "#01386a"},
-        {"name": "양연재", "color_name": "White", "hex": "#000000"}
+        {"name": "양연재", "color_name": "White", "hex": "#ffffff"}
     ],
     5: [
-        {"name": "이용준", "color_name": "Royal Blue", "hex": "#305cde"},
+        {"name": "이용준", "color_name": "Royal Blue", "hex": "#002366"},
         {"name": "임승규", "color_name": "Green", "hex": "#008000"},
         {"name": "박서현", "color_name": "Rose", "hex": "#ff1d8d"}
     ]
@@ -204,6 +204,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

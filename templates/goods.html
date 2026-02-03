@@ -6,18 +6,28 @@
     <title>GOODS - AMOC</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .goods-header { border-bottom: 2px solid #000; padding-bottom: 1rem; }
+        .goods-card { border: 1px solid #eee; border-radius: 0; margin-bottom: 1rem; transition: 0.3s; }
+        .goods-title-btn { 
+            width: 100%; text-align: left; background: none; border: none; 
+            padding: 20px; font-weight: 800; font-size: 1.2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .goods-title-btn:focus { outline: none; }
+        .free-badge { background: #000; color: #fff; font-size: 0.7rem; padding: 4px 8px; vertical-align: middle; margin-left: 10px; }
+        .goods-img { width: 100%; height: auto; object-fit: cover; margin-bottom: 1.5rem; border: 1px solid #f4f4f4; }
+        .goods-desc { padding: 0 20px 25px 20px; font-size: 0.95rem; line-height: 1.8; color: #444; }
+    </style>
 </head>
-<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+<body oncontextmenu="return false" onselectstart="return false">
 
 <nav class="navbar navbar-light sticky-top border-bottom bg-white py-3">
     <div class="container">
         <a class="navbar-brand fw-bold" href="/">AMOC</a>
-        <div class="d-flex align-items-center">
-            <a href="/search" class="btn btn-link text-dark text-decoration-none me-3 fw-bold">SEARCH</a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
     </div>
 </nav>
 
@@ -31,7 +41,7 @@
             <a href="/" class="list-group-item list-group-item-action py-3">Main Home</a>
             <a href="/room/1" class="list-group-item list-group-item-action py-3">Exhibition Rooms</a>
             <a href="/experience" class="list-group-item list-group-item-action py-3">Experience Zone</a>
-            <a href="/goods" class="list-group-item list-group-item-action py-3 fw-bold text-dark">Exhibition Goods</a>
+            <a href="/goods" class="list-group-item list-group-item-action py-3">Exhibition Goods</a>
             <a href="/search" class="list-group-item list-group-item-action py-3">Search</a>
             {% if session['user_id'] %}
             <a href="/admin" class="list-group-item list-group-item-action py-3 text-primary">Admin Panel</a>
@@ -44,50 +54,44 @@
 </div>
 
 <div class="container py-5">
-    <header class="text-center mb-5 pb-4">
-        <h1 class="display-4 mb-3">LIMITED GOODS</h1>
-        <p class="text-muted">색의 만남 전시의 감동을 일상으로 가져갈 수 있는 한정 굿즈를 소개합니다.</p>
+    <header class="goods-header mb-5 text-center">
+        <h1 class="display-5 fw-black">EXHIBITION GOODS</h1>
+        <p class="text-muted small fw-bold">모든 굿즈는 전시 관람객에게 무료로 제공됩니다.</p>
     </header>
 
-    <div class="row g-5">
-        <div class="col-12">
-            <div class="row align-items-center">
-                <div class="col-md-5 mb-4 mb-md-0">
-                    <img src="/static/images/goods1.jpg" class="img-fluid border shadow-sm w-100" alt="Handkerchief" onerror="this.src='https://via.placeholder.com/600x600?text=Handkerchief'">
-                </div>
-                <div class="col-md-7 ps-md-5">
-                    <h2 class="section-title">HANDKERCHIEF</h2>
-                    <p class="fs-5 lh-lg text-muted">
-                        AMOC의 작품이 섬세하게 프린팅된 손수건입니다. 일상 속에서 전시의 여운을 느껴보세요.
-                    </p>
+    <div class="accordion" id="goodsAccordion">
+        <div class="goods-card">
+            <button class="goods-title-btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                01. 손수건 (Handkerchief) <span class="free-badge">FREE</span>
+            </button>
+            <div id="collapseOne" class="collapse show" data-bs-parent="#goodsAccordion">
+                <div class="goods-desc">
+                    <img src="{{ url_for('static', filename='images/goods1.jpg') }}" class="goods-img" alt="손수건">
+                    AMOC의 작품이 섬세하게 프린팅된 손수건입니다. 벽에 걸어 패브릭 포스터처럼 활용해 보세요. 일상 속에서 전시의 여운을 느낄 수 있습니다.
                 </div>
             </div>
         </div>
 
-        <div class="col-12">
-            <div class="row align-items-center">
-                <div class="col-md-5 mb-4 mb-md-0">
-                    <img src="/static/images/goods2.jpg" class="img-fluid border shadow-sm w-100" alt="Magnet" onerror="this.src='https://via.placeholder.com/600x600?text=Magnet'">
-                </div>
-                <div class="col-md-7 ps-md-5">
-                    <h2 class="section-title">ART MAGNET</h2>
-                    <p class="fs-5 lh-lg text-muted">
-                        작품의 강렬한 색감을 그대로 담아낸 마그넷입니다. 냉장고나 책상 등 일상적인 공간을 당신만의 작은 갤러리로 만들어 줍니다.
-                    </p>
+        <div class="goods-card">
+            <button class="goods-title-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                02. 아트 마그넷 (Art Magnet) <span class="free-badge">FREE</span>
+            </button>
+            <div id="collapseTwo" class="collapse" data-bs-parent="#goodsAccordion">
+                <div class="goods-desc">
+                    <img src="{{ url_for('static', filename='images/goods2.jpg') }}" class="goods-img" alt="마그넷">
+                    전시의 주요 작품을 작게 담아낸 마그넷입니다. 철제 가구나 냉장고에 붙여 나만의 작은 갤러리를 만들어보세요.
                 </div>
             </div>
         </div>
 
-        <div class="col-12">
-            <div class="row align-items-center">
-                <div class="col-md-5 mb-4 mb-md-0">
-                    <img src="/static/images/goods3.jpg" class="img-fluid border shadow-sm w-100" alt="Postcard" onerror="this.src='https://via.placeholder.com/600x600?text=Postcard'">
-                </div>
-                <div class="col-md-7 ps-md-5">
-                    <h2 class="section-title">POSTCARD</h2>
-                    <p class="fs-5 lh-lg text-muted">
-                        이번 전시의 작품을 담아 제작한 엽서입니다. 소장용은 물론, 소중한 사람에게 전시의 감동을 전달하기에 최적입니다.
-                    </p>
+        <div class="goods-card">
+            <button class="goods-title-btn collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                03. 엽서 & 엽서 달력 (Postcards & Postcard Callendar) <span class="free-badge">FREE</span>
+            </button>
+            <div id="collapseThree" class="collapse" data-bs-parent="#goodsAccordion">
+                <div class="goods-desc">
+                    <img src="{{ url_for('static', filename='images/goods3.jpg') }}" class="goods-img" alt="엽서">
+                    기본형 엽서 그리고 12개월 달력 특별 세트입니다. 기운을 북돋는 문구도 함께 감상해 보세요. 소중한 사람에게 전시의 감동을 전달하기에도 최적입니다. 
                 </div>
             </div>
         </div>
@@ -105,8 +109,6 @@
         <p class="mt-5 opacity-50 small">COPYRIGHT &copy; 2026 AMOC. ALL RIGHTS RESERVED.</p>
     </div>
 </footer>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

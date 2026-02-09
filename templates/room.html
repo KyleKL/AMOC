@@ -136,7 +136,7 @@
                     <img src="/static/uploads/{{ art.image_file }}" class="card-img-top">
                 </div>
                 <div class="card-body px-0 pt-3 text-center">
-                    <h5 class="artwork-title mb-1" style="font-size:1rem;">{{ art.title }}</h5>
+                    <h5 class="artwork-title mb-1" style="font-size:1rem;">{{ art.title|safe }}</h5>
                     <p class="text-muted small fw-medium">
                         {{ art.artist }}
                         {% for info in artists_info %}
@@ -173,3 +173,4 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

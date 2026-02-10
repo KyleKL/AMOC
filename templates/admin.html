@@ -63,8 +63,9 @@
                             <textarea name="description" class="form-control" rows="4" required></textarea>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label small fw-bold">IMAGE</label>
-                            <input type="file" name="image" class="form-control" accept="image/*" required>
+                            <label class="form-label small fw-bold">IMAGE FILENAME (깃허브에 올린 파일명)</label>
+                            <input type="text" name="image_filename" class="form-control" placeholder="예: art1.jpg" required>
+                            <small class="text-muted">static/uploads 폴더에 올린 파일명을 확장자까지 정확히 적어주세요.</small>
                         </div>
                         <button type="submit" class="btn btn-dark w-100 py-3 fw-bold rounded-0">ADD TO ARCHIVE</button>
                     </form>
@@ -128,4 +129,5 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

@@ -114,21 +114,33 @@ def goods():
 
 @app.route('/search')
 def search():
+    # URL에 검색 파라미터가 있는지 확인
+    # q, room, artist 중 하나라도 파라미터로 넘어왔다면 검색을 시도한 것으로 간주
+    # 그냥 /search로 들어오면 request.args가 비어있으므로 searched = False
+    searched = bool(request.args)
+    
     q = request.args.get('q', '')
     room_filter = request.args.get('room', '')
     artist_filter = request.args.get('artist', '')
 
-    query = Artwork.query
-    if q:
-        query = query.filter(or_(Artwork.title.like(f'%{q}%'), Artwork.artist.like(f'%{q}%')))
-    if room_filter:
-        query = query.filter_by(room=int(room_filter))
-    if artist_filter:
-        query = query.filter_by(artist=artist_filter)
+    results = []
+    
+    # 검색 버튼을 눌렀을 때만(파라미터가 있을 때만) DB 조회를 실행
+    if searched:
+        query = Artwork.query
+        if q:
+            query = query.filter(or_(Artwork.title.like(f'%{q}%'), Artwork.artist.like(f'%{q}%')))
+        if room_filter:
+            query = query.filter_by(room=int(room_filter))
+        if artist_filter:
+            query = query.filter_by(artist=artist_filter)
+        
+        results = query.all()
 
-    results = query.all()
+    # searched 변수를 템플릿으로
     return render_template('search.html', results=results, query=q, 
-                           current_room=room_filter, current_artist=artist_filter, artists=ARTISTS)
+                           current_room=room_filter, current_artist=artist_filter, artists=ARTISTS,
+                           searched=searched)
 
 @app.route('/artwork/<int:artwork_id>')
 def detail(artwork_id):
@@ -224,6 +236,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

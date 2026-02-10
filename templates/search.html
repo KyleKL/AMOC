@@ -130,24 +130,36 @@
     </div>
 
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center">
-        {% for art in results %}
-        <div class="col">
-            <div class="card h-100 artwork-card shadow-sm" onclick="location.href='/artwork/{{ art.id }}'">
-                <div class="card-img-wrapper">
-                    <img src="/static/uploads/{{ art.image_file }}" class="card-img-top">
-                </div>
-                <div class="card-body px-0 pt-3 text-center">
-                    <h5 class="artwork-title mb-1" style="font-size:0.9rem;">{{ art.title|safe }}</h5>
-                    <p class="text-muted small fw-medium mb-0">{{ art.artist }}</p>
-                    <span class="badge bg-light text-dark border mt-2" style="font-size: 0.7rem;">ROOM {{ art.room }}</span>
+        
+        {# 1. 검색 버튼을 눌렀을 때 (searched == True) #}
+        {% if searched %}
+            {% for art in results %}
+            <div class="col">
+                <div class="card h-100 artwork-card shadow-sm" onclick="location.href='/artwork/{{ art.id }}'">
+                    <div class="card-img-wrapper">
+                        <img src="/static/uploads/{{ art.image_file }}" class="card-img-top">
+                    </div>
+                    <div class="card-body px-0 pt-3 text-center">
+                        <h5 class="artwork-title mb-1" style="font-size:0.9rem;">{{ art.title|safe }}</h5>
+                        <p class="text-muted small fw-medium mb-0">{{ art.artist }}</p>
+                        <span class="badge bg-light text-dark border mt-2" style="font-size: 0.7rem;">ROOM {{ art.room }}</span>
+                    </div>
                 </div>
             </div>
-        </div>
+            {% else %}
+            <div class="col-12 py-5 text-center text-muted fw-bold border bg-light">
+                검색 결과가 없습니다.
+            </div>
+            {% endfor %}
+
+        {# 2. 아직 검색하지 않았을 때 (초기 화면) #}
         {% else %}
-        <div class="col-12 py-5 text-center text-muted fw-bold border bg-light">
-            검색 결과가 없습니다.
+        <div class="col-12 py-5 text-center text-muted">
+            <p class="fw-bold fs-5 mb-2">SEARCH FOR ARTWORKS</p>
+            <p class="small">제목, 작가명 또는 전시관(ROOM)을 선택하여 검색해 주세요.</p>
         </div>
-        {% endfor %}
+        {% endif %}
+        
     </div>
 </div>
 
@@ -175,3 +187,4 @@
 </body>
 
 </html>
+

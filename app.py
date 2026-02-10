@@ -173,17 +173,16 @@ def admin_main():
 @app.route('/admin/add', methods=['POST'])
 @login_required
 def add_artwork():
-    file = request.files['image']
-    if file:
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        
+    # 파일 업로드 대신 텍스트로 된 파일명을 가져옵니다.
+    filename = request.form.get('image_filename')
+    
+    if filename:
         new_art = Artwork(
             title=request.form.get('title'),
             artist=request.form.get('artist'),
             medium=request.form.get('medium'),
             description=request.form.get('description'),
-            image_file=filename,
+            image_file=filename,  # 입력한 파일명을 그대로 DB에 저장
             room=int(request.form.get('room'))
         )
         db.session.add(new_art)
@@ -204,6 +203,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

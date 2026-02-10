@@ -207,12 +207,24 @@ def delete_artwork(id):
     db.session.commit()
     return redirect(url_for('admin_main'))
 
+@app.route('/comment/delete/<int:comment_id>')
+@login_required
+def delete_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    artwork_id = comment.artwork_id 
+    
+    db.session.delete(comment)
+    db.session.commit()
+    
+    return redirect(url_for('detail', artwork_id=artwork_id))
+    
 # --- 서버 실행 및 DB 생성 ---
 with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

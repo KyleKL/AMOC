@@ -125,7 +125,7 @@ footer {
     justify-content: center;
     align-items: center;
     width: 100%;
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
     padding: 10px; /* 여백 추가 */
 }
 
@@ -148,4 +148,5 @@ footer {
     margin: 0 auto;     /* 가로 중앙 정렬 */
     border: 1px solid #eee; /* 선택 사항: 지도 경계선을 위한 얇은 테두리 */
 }
+
 

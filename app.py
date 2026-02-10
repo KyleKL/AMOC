@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
@@ -11,6 +11,16 @@ from functools import wraps
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
+
+# --- 한국 시간 변환 필터 (UTC + 9시간) ---
+@app.template_filter('kst')
+def datetime_kst(value):
+    if value is None:
+        return ""
+    # 서버 시간(UTC)에 9시간을 더해 한국 시간으로 변환
+    kst_time = value + timedelta(hours=9)
+    return kst_time.strftime('%Y-%m-%d %H:%M')
+
 app.config['SECRET_KEY'] = 'amoc-2026-v3-secure'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'exhibition.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -203,6 +213,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

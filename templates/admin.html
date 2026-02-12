@@ -25,38 +25,65 @@
 
 <div class="container pb-5">
     <div class="row g-4">
-        <div class="col-12 mb-4">
-            <div class="card shadow-sm">
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">DAILY STATISTICS</h5>
                     <a href="/admin/reset_views" 
                        class="btn btn-danger btn-sm rounded-0 fw-bold" 
-                       onclick="return confirm('경고: 모든 작품의 조회수가 0이 됩니다.\n정말 초기화하시겠습니까?');">
-                       RESET ALL VIEWS
+                       onclick="return confirm('경고: 모든 작품의 조회수가 0이 됩니다.\n정말 초기화하시겠습니까?');"
+                       style="font-size: 0.7rem;">
+                       RESET ALL
                     </a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-bordered mb-0 text-center">
+                        <table class="table table-bordered mb-0 text-center" style="font-size: 0.85rem;">
                             <thead class="bg-light">
                                 <tr>
                                     <th>DATE</th>
-                                    <th>VISITORS (접속자)</th>
-                                    <th>ART VIEW (작품 조회)</th>
+                                    <th>VISITORS</th>
+                                    <th>VIEWS</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for stat in stats %}
                                 <tr>
                                     <td class="fw-bold">{{ stat.date_str }}</td>
-                                    <td>{{ stat.visitor_count }} 명</td>
-                                    <td>{{ stat.total_view_count }} 회</td>
+                                    <td>{{ stat.visitor_count }}</td>
+                                    <td>{{ stat.total_view_count }}</td>
                                 </tr>
                                 {% else %}
-                                <tr><td colspan="3" class="text-muted">데이터가 없습니다.</td></tr>
+                                <tr><td colspan="3" class="text-muted small py-3">데이터가 없습니다.</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">TOP 5 ARTWORKS</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for art in popular_artworks %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-dark rounded-0 me-3">{{ loop.index }}위</span>
+                                <div>
+                                    <p class="mb-0 fw-bold text-truncate" style="max-width: 150px;">{{ art.title }}</p>
+                                    <small class="text-muted">{{ art.artist }} (Room {{ art.room }})</small>
+                                </div>
+                            </div>
+                            <span class="fw-bold text-primary">{{ art.views }} views</span>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4 text-muted small">아직 집계된 데이터가 없습니다.</div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -167,4 +194,5 @@
 </body>
 
 </html>
+
 

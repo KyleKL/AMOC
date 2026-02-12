@@ -236,7 +236,16 @@ def admin_main():
     artworks = Artwork.query.all()
     comments = Comment.query.order_by(Comment.created_at.desc()).limit(10).all()
     stats = DailyStat.query.order_by(DailyStat.date_str.desc()).all()
-    return render_template('admin.html', artworks=artworks, comments=comments, artists=ARTISTS, stats=stats)
+    
+    # 조회수 높은 순으로 상위 5개 가져오기 
+    popular_artworks = Artwork.query.order_by(Artwork.views.desc()).limit(5).all()
+    
+    return render_template('admin.html', 
+                           artworks=artworks, 
+                           comments=comments, 
+                           artists=ARTISTS, 
+                           stats=stats, 
+                           popular_artworks=popular_artworks)
 
 # --- [추가] 작품 조회수 전체 초기화 ---
 @app.route('/admin/reset_views')
@@ -293,6 +302,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

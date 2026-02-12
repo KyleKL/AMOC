@@ -169,8 +169,29 @@ def search():
 @app.route('/artwork/<int:artwork_id>')
 def detail(artwork_id):
     artwork = Artwork.query.get_or_404(artwork_id)
-    artwork.views += 1
-    db.session.commit()
+    
+    # --- [수정됨] 조회수 증가 로직 (새로고침 방지) ---
+    # 세션에 'viewed_artworks' 리스트가 없으면 생성
+    if 'viewed_artworks' not in session:
+        session['viewed_artworks'] = []
+    
+    # 이 작품을 본 적이 없으면 조회수 증가
+    if artwork_id not in session['viewed_artworks']:
+        artwork.views += 1
+        session['viewed_artworks'].append(artwork_id)
+        session.modified = True  # 세션 변경 사항 저장 알림
+        
+        # 일별 통계에도 작품 조회수 +1
+        kst_today = (datetime.utcnow() + timedelta(hours=9)).strftime('%Y-%m-%d')
+        stat = DailyStat.query.get(kst_today)
+        if not stat:
+            stat = DailyStat(date_str=kst_today, visitor_count=0, total_view_count=0)
+            db.session.add(stat)
+        stat.total_view_count += 1
+        
+        db.session.commit()
+    # ---------------------------------------------
+
     comments = Comment.query.filter_by(artwork_id=artwork_id).order_by(Comment.created_at.desc()).all()
     
     artist_color_info = None
@@ -260,6 +281,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

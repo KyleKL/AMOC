@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
@@ -31,11 +31,35 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
 
+@app.before_request
+def count_visitor():
+    # 세션에 'visited' 표시가 없으면 (오늘 처음 온 사람)
+    if 'visited_site' not in session:
+        # 한국 시간 기준 '오늘' 날짜 구하기
+        kst_today = (datetime.utcnow() + timedelta(hours=9)).strftime('%Y-%m-%d')
+        
+        stat = DailyStat.query.get(kst_today)
+        if not stat:
+            stat = DailyStat(date_str=kst_today, visitor_count=0, total_view_count=0)
+            db.session.add(stat)
+        
+        stat.visitor_count += 1
+        db.session.commit()
+        
+        # 세션에 방문 기록 남김 (브라우저 닫기 전까지 유지)
+        session['visited_site'] = True
+
 # --- 데이터베이스 모델 정의 ---
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+
+# --- 일별 통계 모델  ---
+class DailyStat(db.Model):
+    date_str = db.Column(db.String(10), primary_key=True)  # 날짜 (2026-02-12)
+    visitor_count = db.Column(db.Integer, default=0)       # 사이트 방문자 수
+    total_view_count = db.Column(db.Integer, default=0)    # 작품 총 조회수
 
 class Artwork(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -236,6 +260,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

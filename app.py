@@ -234,8 +234,9 @@ def logout():
 @login_required
 def admin_main():
     artworks = Artwork.query.all()
-    comments = Comment.query.all()
-    return render_template('admin.html', artworks=artworks, comments=comments, artists=ARTISTS)
+    comments = Comment.query.order_by(Comment.created_at.desc()).limit(10).all()
+    stats = DailyStat.query.order_by(DailyStat.date_str.desc()).all()
+    return render_template('admin.html', artworks=artworks, comments=comments, artists=ARTISTS, stats=stats)
 
 # --- [추가] 작품 조회수 전체 초기화 ---
 @app.route('/admin/reset_views')
@@ -292,6 +293,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

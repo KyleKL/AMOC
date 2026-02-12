@@ -237,6 +237,17 @@ def admin_main():
     comments = Comment.query.all()
     return render_template('admin.html', artworks=artworks, comments=comments, artists=ARTISTS)
 
+# --- [추가] 작품 조회수 전체 초기화 ---
+@app.route('/admin/reset_views')
+@login_required
+def reset_views():
+    # 모든 작품의 조회수를 0으로 변경
+    # 방법: DB를 직접 업데이트
+    db.session.query(Artwork).update({Artwork.views: 0})
+    db.session.commit()
+    flash("모든 작품의 조회수가 초기화되었습니다.")
+    return redirect(url_for('admin_main'))
+
 @app.route('/admin/add', methods=['POST'])
 @login_required
 def add_artwork():
@@ -281,6 +292,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 

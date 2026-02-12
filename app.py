@@ -69,6 +69,7 @@ class Artwork(db.Model):
     description = db.Column(db.Text, nullable=False)
     image_file = db.Column(db.String(100), nullable=False)
     room = db.Column(db.Integer, default=1)
+    display_order = db.Column(db.Integer, default=0)
     views = db.Column(db.Integer, default=0)
     comments = db.relationship('Comment', backref='artwork', cascade="all, delete-orphan")
 
@@ -124,7 +125,7 @@ def index():
 
 @app.route('/room/<int:room_num>')
 def room_view(room_num):
-    artworks = Artwork.query.filter_by(room=room_num).all()
+    artworks = Artwork.query.filter_by(room=room_num).order_by(Artwork.display_order, Artwork.artist).all()
     artists_info = ROOM_ARTISTS.get(room_num, [])
     return render_template('room.html', artworks=artworks, room_num=room_num, artists_info=artists_info)
 
@@ -295,6 +296,18 @@ def delete_comment(comment_id):
     db.session.commit()
     
     return redirect(url_for('detail', artwork_id=artwork_id))
+
+# [app.py] 맨 아래쪽에 추가
+
+@app.route('/admin/update_order/<int:artwork_id>', methods=['POST'])
+@login_required
+def update_artwork_order(artwork_id):
+    art = Artwork.query.get_or_404(artwork_id)
+    # 폼에서 입력받은 숫자로 순서 업데이트
+    new_order = request.form.get('display_order', type=int)
+    art.display_order = new_order
+    db.session.commit()
+    return redirect(url_for('admin_main'))
     
 # --- 서버 실행 및 DB 생성 ---
 with app.app_context():
@@ -302,6 +315,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
